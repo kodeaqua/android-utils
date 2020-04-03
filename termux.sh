@@ -7,6 +7,7 @@
 #                    3. Google, StackOverFlow, and many more!
 # This is broken build, because still WIP
 # Don't ever clone this build if i didn't delete this yet
+# ATTENTION: This script compatible with Android 8.1 below only, because of Pie Above remove their make_ext4fs
 
 # Constants
 export AU=${PREFIX}/share/au;
@@ -123,7 +124,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_img2sdat;
+        au_img2sdat >/dev/null 2>&1;
         if [ -d ${AU}/share/img2sdat ];
           then
             echo "          installed!";
@@ -138,7 +139,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_sdat2img;
+        au_sdat2img >/dev/null 2>&1;
         if [ -d ${AU}/share/sdat2img ];
           then
             echo "          installed!";
@@ -153,7 +154,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_sefparse;
+        au_sefparse >/dev/null 2>&1;
         if [ -d ${AU}/share/sefcontext-parser ];
           then
             echo "          installed!";
@@ -168,7 +169,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_make_ext4fs;
+        au_make_ext4fs >/dev/null 2>&1;
         if [ $(which make_ext4fs) ];
           then
             echo "          installed!";
