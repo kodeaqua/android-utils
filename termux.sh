@@ -28,7 +28,7 @@ au_self(){
     if ! [ -d ${AU} ];
       then
         mkdir -p ${AU};
-        mkdir -p ${AU}/{bin,share}
+        mkdir -p ${AU}/{bin,share};
     fi;
     if ! [ -d ${AU_EX} ];
       then
@@ -46,22 +46,22 @@ au_pkg(){
 
     if ! [ $(which git) ];
       then
-        PACKAGES=${PACKAGES}" git"
+        PACKAGES=${PACKAGES}" git";
     fi;
 
     if ! [ $(which python) ];
       then
-        PACKAGES=${PACKAGES}" python"
+        PACKAGES=${PACKAGES}" python";
     fi;
 
     if ! [ $(which brotli) ];
       then
-        PACKAGES=${PACKAGES}" brotli"
+        PACKAGES=${PACKAGES}" brotli";
     fi;
 
     if ! [ $(which 7z) ];
       then
-        PACKAGES=${PACKAGES}" p7zip"
+        PACKAGES=${PACKAGES}" p7zip";
     fi;
 
     pkg update -y && pkg upgrade -y;
@@ -84,7 +84,7 @@ au_sdat2img(){
 au_sefparse(){
     git clone https://github.com/jakev/sefcontext-parser.git ${AU}/share/sefcontext-parser;
     cd ${AU}/share/sefcontext-parser;
-    chmod +x setup.py && tsudo python setup.py install
+    chmod +x setup.py && python setup.py install;
 }
 
 # Make_ext4fs installer
@@ -100,9 +100,9 @@ au_make_ext4fs(){
 # Header
 au_header(){
     clear;
-    echo "*************************************************";
-    echo "                Android Utils                    ";
-    echo "*************************************************";
+    echo "************************************************";
+    echo "                Android Utils                   ";
+    echo "************************************************";
     sleep 1;
 }
 
@@ -111,10 +111,10 @@ au_setup(){
     au_header;
 
     echo "==> Check and installing required packages...";
-    au_pkg;
+    au_pkg >/dev/null 2>&1;
 
     echo "==> Initializing project...";
-    au_self;
+    au_self >/dev/null 2>&1;
 
     echo "==> Checking tools...";
     echo "    [1/4] img2sdat";
