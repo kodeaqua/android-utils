@@ -3,8 +3,8 @@
 # Version 0.1
 # Written by: Adam Najmi Zidan
 # Special Thanks to: 1. Andrei Conache (xpirt)
-                     2. Jake Valleta (jakev)
-                     3. Google, StackOverFlow, and many more!
+#                    2. Jake Valleta (jakev)
+#                    3. Google, StackOverFlow, and many more!
 # This is broken build, because still WIP
 # Don't ever clone this build if i didn't delete this yet
 
@@ -108,13 +108,13 @@ au_header(){
 
 # Setup
 au_setup(){
-    header;
+    au_header;
 
     echo "==> Check and installing required packages...";
-    au_pkg >/dev/null 2>&1;
+    au_pkg;
 
     echo "==> Initializing project...";
-    au_self >/dev/null 2>&1;
+    au_self;
 
     echo "==> Checking tools...";
     echo "    [1/4] img2sdat";
@@ -123,7 +123,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_img2sdat >/dev/null 2>&1;
+        au_img2sdat;
         if [ -d ${AU}/share/img2sdat ];
           then
             echo "          installed!";
@@ -138,7 +138,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_sdat2img >/dev/null 2>&1;
+        au_sdat2img;
         if [ -d ${AU}/share/sdat2img ];
           then
             echo "          installed!";
@@ -153,7 +153,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_sefparse >/dev/null 2>&1;
+        au_sefparse;
         if [ -d ${AU}/share/sefcontext-parser ];
           then
             echo "          installed!";
@@ -168,7 +168,7 @@ au_setup(){
         echo "          already installed!";
       else
         echo "          installing...";
-        au_make_ext4fs >/dev/null 2>&1;
+        au_make_ext4fs;
         if [ $(make_ext4fs) ];
           then
             echo "          installed!";
@@ -180,7 +180,10 @@ au_setup(){
 
 # AU menu
 au_menu(){
-    header;
+    au_header;
 
     echo "Warning: AU menu is under construction! try again later!"
 }
+
+# Start
+au_start;
