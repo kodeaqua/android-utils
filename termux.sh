@@ -84,7 +84,7 @@ au_sdat2img(){
 au_sefparse(){
     git clone https://github.com/jakev/sefcontext-parser.git ${AU}/share/sefcontext-parser;
     cd ${AU}/share/sefcontext-parser;
-    chmod +x setup.py && python setup.py install
+    chmod +x setup.py && tsudo python setup.py install
 }
 
 # Make_ext4fs installer
@@ -93,7 +93,7 @@ au_make_ext4fs(){
       then
         cp ${ANDROID_ROOT}/bin/make_ext4fs ${AU}/bin/make_ext4fs
         chmod +x ${AU}/bin/make_ext4fs;
-        ln -sf ${AU}/bin/make_ext4fs ${PREFIX}/bin/make_ext4fs;
+        tsudo ln -sf ${AU}/bin/make_ext4fs ${PREFIX}/bin/make_ext4fs;
     fi
 }
 
