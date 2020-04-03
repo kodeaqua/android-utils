@@ -46,26 +46,26 @@ au_pkg(){
 
     if ! [ $(which git) ];
       then
-        PACKAGES='${PACKAGES} git'
+        PACKAGES=${PACKAGES}" git"
     fi;
 
     if ! [ $(which python) ];
       then
-        PACKAGES='${PACKAGES} python'
+        PACKAGES=${PACKAGES}" python"
     fi;
 
     if ! [ $(which brotli) ];
       then
-        PACKAGES='${PACKAGES} brotli'
+        PACKAGES=${PACKAGES}" brotli"
     fi;
 
     if ! [ $(which 7z) ];
       then
-        PACKAGES='${PACKAGES} p7zip'
+        PACKAGES=${PACKAGES}" p7zip"
     fi;
 
     pkg update -y && pkg upgrade -y;
-    pkg install ${PACKAGES};
+    pkg install ${PACKAGES} -y;
 }
 
 # Img2sdat installer
