@@ -180,13 +180,118 @@ au_setup(){
 }
 
 # Img2sdat wrapper
-img2sdat(){
+au_img2sdat(){
     python ${AU}/share/img2sdat/img2sdat.py "$1" "$2" "$3" "$4" "$5";
 }
 
 # Sdat2img wrapper
-sdat2img(){
+au_sdat2img(){
     python ${AU}/share/sdat2img/sdat2img.py "$1" "$2" "$3";
+}
+
+# Unpack
+au_unpack(){
+    echo "==> Preparing...";
+    START=$(date +%s);
+
+    echo "==> Cleaning build environment...";
+    for junk in $(find . -type d)
+      do
+        rm -rf ${junk} >/dev/null 2>&1;
+    done
+
+    echo "==> Unpacking...";
+    if [ -f ./system.new.dat.br ];
+      then
+        echo "    [1/3] decompressing system brotli...";
+        brotli -d ./system.new.dat.br;
+        if [ -f ./system.new.dat ];
+          then
+            echo "    [1/3] done!";
+          else
+            echo "    [1/3] failed!";
+        fi;
+      elif [ -f ./vendor.new.dat.br ];
+        then
+          echo "    [1/3] decompressing vendor brotli...";
+          brotli -d ./vendor.new.dat.br;
+          if [ -f ./vendor.new.dat ];
+            then
+              echo "    [1/3] done!";
+            else
+              echo "    [1/3] failed!";
+          fi;
+      else
+        echo "    [1/3] skipped brotli task!";
+    fi;
+    if [ -f ./system.new.dat ];
+      then
+        echo "    [2/3] converting system dat...";
+        au_sdat2img ./system.transfer.list ./system.new.dat ./system.img >/dev/null 2>&1;
+        if [ -f ./system.img ];
+          then
+            echo "    [2/3] done!";
+          else
+            echo "    [2/3] failed!";
+        fi;
+      elif [ -f ./vendor.new.dat ];
+        then
+          echo "    [2/3] converting vendor dat...";
+          au_sdat2img ./vendor.transfer.list ./vendor.new.dat ./vendor.img >/dev/null 2>&1;
+          if [ -f ./vendor.img ];
+            then
+              echo "    [2/3] done!";
+            else
+              echo "    [2/3] failed!";
+          fi;
+      else
+        echo "    [2/3] skipped convert task!";
+    fi;
+    if [ -f ./system.img ];
+      then
+        echo "    [3/3] extracting system image...";
+        mkdir -p ./{system,tmp}
+        losetup /dev/block/loop3 ./system.img;
+        mount -t ext4 /dev/block/loop3 ./system;
+        cp -rfp ./system ./tmp;
+        losetup -d /dev/block/loop3;
+        umount /dev/block/loop3;
+        mv ./tmp/system .;
+        rm -rf ./{system.img,tmp};
+        if [ -d ./system ];
+          then
+            echo "    [3/3] done!";
+          else
+            echo "    [3/6] failed!";
+        fi;
+      elif [ -f ./vendor.img ];
+        then
+          echo "    [3/3] extracting vendor image...";
+          mkdir -p ./{vendor,tmp}
+          losetup /dev/block/loop3 ./vendor.img;
+          mount -t ext4 /dev/block/loop3 ./vendor.img;
+          cp -rfp ./vendor ./tmp;
+          losetup -d /dev/block/loop3;
+          umount /dev/block/loop3;
+          mv ./tmp/vendor .;
+          rm -rf ./{vendor.img,tmp};
+          if [ -d ./vendor ];
+            then
+              echo "    [3/3] done!";
+            else
+              echo "    [3/3] failed!";
+          fi;
+      else
+        echo "    [3/3] skipped image extracting!";
+    fi;
+
+    echo "==> Task completed in";
+    END=$(date +%s);
+    TIME=$((${END} - ${START}));
+    echo "    $((${TIME} / 60)) minute(s) and $((${TIME} % 60)) seconds";
+    
+    echo "==> Press enter to continue...";
+    read;    
 }
 
 # AU menu
