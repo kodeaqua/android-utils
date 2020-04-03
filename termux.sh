@@ -179,6 +179,16 @@ au_setup(){
     fi;
 }
 
+# Img2sdat wrapper
+img2sdat(){
+    python ${AU}/share/img2sdat/img2sdat.py "$1" "$2" "$3" "$4" "$5";
+}
+
+# Sdat2img wrapper
+sdat2img(){
+    python ${AU}/share/sdat2img/sdat2img.py "$1" "$2" "$3";
+}
+
 # AU menu
 au_menu(){
     au_header;
