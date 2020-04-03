@@ -15,7 +15,7 @@ export AU_EX=${EXTERNAL_STORAGE}/au;
 # List functions
 # Launch action
 au_start(){
-    if [ $(au) ];
+    if [ $(which au) ];
       then
         au_menu;
       else
@@ -39,27 +39,27 @@ au_self(){
 
 # Package(s) checking
 au_pkg(){
-    if ! [ $(tsu) ];
+    if ! [ $(which tsu) ];
       then
         PACKAGES="tsu";
     fi
 
-    if ! [ $(git) ];
+    if ! [ $(which git) ];
       then
         PACKAGES='${PACKAGES} git'
     fi;
 
-    if ! [ $(python) ];
+    if ! [ $(which python) ];
       then
         PACKAGES='${PACKAGES} python'
     fi;
 
-    if ! [ $(brotli) ];
+    if ! [ $(which brotli) ];
       then
         PACKAGES='${PACKAGES} brotli'
     fi;
 
-    if ! [ $(7z) ];
+    if ! [ $(which 7z) ];
       then
         PACKAGES='${PACKAGES} p7zip'
     fi;
@@ -163,13 +163,13 @@ au_setup(){
     fi;
 
     echo "    [4/4] make_ext4fs";
-    if [ $(make_ext4fs) ];
+    if [ $(which make_ext4fs) ];
       then
         echo "          already installed!";
       else
         echo "          installing...";
         au_make_ext4fs;
-        if [ $(make_ext4fs) ];
+        if [ $(which make_ext4fs) ];
           then
             echo "          installed!";
           else
