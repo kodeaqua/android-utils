@@ -267,7 +267,7 @@ au_unpack(){
         fi;
       elif [ -f ./vendor.img ];
         then
-          du -b ./vendor.img | grep -f -1 > ./.size;
+          du -b ./vendor.img | cut -f -1 > ./.size;
           echo "    [3/3] extracting vendor image...";
           mkdir -p ./{vendor,tmp}
           losetup /dev/block/loop3 ./vendor.img;
