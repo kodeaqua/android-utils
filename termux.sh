@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # Android Utils
-# Version 0.1
+# Version 0.2
 # Written by: Adam Najmi Zidan
 # Special Thanks to: 1. Andrei Conache (xpirt)
 #                    2. Jake Valleta (jakev)
@@ -36,6 +36,8 @@ au_self(){
         tsudo mkdir -p ${AU_EX};
         tsudo mkdir -p ${AU_EX}/{logs,prods};
     fi;
+    cp ./termux.sh ${AU}/bin/au;
+    tsudo ln -sf ${AU}/bin/au ${PREFIX}/bin/au;
 }
 
 # Package(s) checking
@@ -426,7 +428,20 @@ au_repack(){
 au_menu(){
     au_header;
 
-    echo "Warning: AU menu is under construction! try again later!"
+    echo " 1. Unpack";
+    echo " 2. Repack";
+    echo " 3. Exit";
+    read -p " > Enter the number: " USERINPUT;
+    
+    case ${USERINPUT} in
+    1) au_unpack;
+       au_menu;;
+    2) au_repack;
+       au_menu;;
+    3) clear;
+       exit;;
+    *) au_menu;;
+    esac;
 }
 
 # Start
