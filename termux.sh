@@ -249,6 +249,7 @@ au_unpack(){
     fi;
     if [ -f ./system.img ];
       then
+        du -b ./system.img | cut -f -1 > ./.size;
         echo "    [3/3] extracting system image...";
         mkdir -p ./{system,tmp}
         losetup /dev/block/loop3 ./system.img;
@@ -266,6 +267,7 @@ au_unpack(){
         fi;
       elif [ -f ./vendor.img ];
         then
+          du -b ./vendor.img | grep -f -1 > ./.size;
           echo "    [3/3] extracting vendor image...";
           mkdir -p ./{vendor,tmp}
           losetup /dev/block/loop3 ./vendor.img;
