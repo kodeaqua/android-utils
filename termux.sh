@@ -296,6 +296,132 @@ au_unpack(){
     read;    
 }
 
+au_repack(){
+    au_header;
+
+    echo "==> Checking stuff before building...";
+    if [ $(find -type d -not -path . | cut --complement -d "/" -f -1) == "system" ];
+      then
+        BUILD_PARTITION="system";
+        echo "    [1/4] partition: ${BUILD_PARTITION}";
+      elif [ $(find -type d -not -path . | cut --complement -d "/" -f -1) == "vendor" ];
+        then
+          BUILD_PARTITION="vendor";
+          echo "    [1/4] partition: ${BUILD_PARTITION}";
+        else
+          echo "    [1/4] failed!";
+    fi;
+
+    if [ -f ./.size ];
+      then
+        BUILD_SIZE=$(cat ./.size | cut -f -1);
+        echo "    [2/4] size: ${BUILD_SIZE}";
+      else
+        echo "    [2/4] failed!";
+    fi;
+
+    if [ -f ./file_contexts.bin ];
+      then
+        echo "    [3/4] converting contexts binary...";
+        sefparse ./file_contexts.bin -o ./file_contexts;
+        if [ -f ./file_contexts ];
+          then
+            BUILD_CONTEXTS=1;
+            echo "    [3/4] done!";
+          else
+            echo "    [3/4] failed!";
+        fi;
+      elif [ -f ./file_contexts ];
+        then
+          BUILD_CONTEXTS=1;
+          echo "    [3/4] skipped convert task!";
+        else
+          BUILD_CONTEXTS=0;
+          echo "    [3/4] failed!";
+    fi;
+
+    if [ -f ./.var ];
+      then
+        if [ $(cat ./.var | cut --complement -d "." -f -2) == "dat" ];
+          then
+            BUILD_VAR="dat";
+            echo "    [4/4] build variant: ${BUILD_VAR}";
+          elif [ $(cat ./.var | cut --complement -d "." -f -2) == "dat.br" ];
+            then
+              BUILD_VAR="dat.br";
+              echo "    [4/4] build variant: ${BUILD_VAR}";
+            else
+              echo "    [4/4] failed!";
+        fi;
+
+    echo "==> Building image...";
+    echo "    [1/4] cleaning junks...";
+    find ${BUILD_PARTITION} -type d -empty -exec rm -rf {} \;
+    echo "    [1/4] done!";
+
+    echo "    [2/4] resetting timestamp...";
+    find ${BUILD_PARTITION} -exec touch -a -m -h -d 2009-01-01T07:00:00 {} \;
+    echo "    [2/4] done!";
+
+    echo "    [3/4] creating ${BUILD_PARTITION} image";
+    if [ ${BUILD_CONTEXTS} == 1 ];
+      then
+        make_ext4fs -s -T -1 -S ./file_contexts -L ${BUILD_PARTITION} -l ${BUILD_SIZE} -a ${BUILD_PARTITION} ./${BUILD_PARTITION}.img ./${BUILD_PARTITION} ./${BUILD_PARTITION};
+        if [ -f ${BUILD_PARTITION}.new.dat ];
+          then
+            echo "    [3/4] done!";
+          else
+            echo "    [3/4] failed!";
+        fi;
+      elif [ ${BUILD_CONTEXTS} == 0 ];
+        then
+          make_ext4fs -s -T -1 -L ${BUILD_PARTITION} -l ${BUILD_SIZE} -a ${BUILD_PARTITION} ./${BUILD_PARTITION}.img ./${BUILD_PARTITION} ./${BUILD_PARTITION};
+          if [ -f ${BUILD_PARTITION}/new.dat ];
+            then
+              echo "    [3/4] done!";
+            else
+              echo "    [3/4] failed!";
+           fi;
+        else
+          echo "    [3/4] failed!";
+    fi;
+    
+    if [ ${BUILD_VAR} == "dat.br" ];
+      then
+        echo "    [4/4] compressing dat with brotli...";
+        brotli -q 6 ./${BUILD_PARTITION}.new.dat;
+        if [ -f ./${BUILD_PARTITION}.new.dat.br ];
+          then
+            echo "    [4/4] done!";
+          else
+            echo "    [4/4] failed!";
+        fi;
+      elif [ ${BUILD_VAR} == "dat" ];
+        then
+          echo "    [4/4] skipped brotli task!";
+        else
+          echo "    [4/4] skipped brotli task!";
+    fi;
+
+    echo "==> Moving image to storage...";
+    tsudo mkdir -p ${AU_EX}/prods/${DATE};
+    tsudo mv ./${BUILD_PARTITION}.new.${BUILD_VAR}; ${AU_EX}/prods/${DATE};
+    if [ -f ${AU_EX}/prods/${DATE}/${BUILD_PARTITION}.new.${BUILD_VAR} ];
+      then
+        echo "    done!";
+      else
+        echo "    failed!";
+    fi;
+
+    echo "==> Task completed in";
+    END=$(date +%s);
+    TIME=$((${END} - ${START}));
+    echo "    $((${TIME} / 60)) minute(s) and $((${TIME} % 60)) seconds";
+
+    echo "==> Press enter to continue...";
+    read;
+}
+
 # AU menu
 au_menu(){
     au_header;
